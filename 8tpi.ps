@@ -1,0 +1,101 @@
+%!PS-Adobe-2.0
+%%Title: Saw Filing Guides
+%%Creator: Helge Knüttel
+%%CreationDate: 2017-12-30
+%%DocumentPaperSizes: A4
+%%EndComments
+% 
+% Create guides for saw filing.
+% 
+% The sheets will be filled with horizontal lines.
+% Distance between lines corresponds to the spacing 
+% of saw teeth or the gullets in between.
+% 
+% The pages must be printed WITHOUT further scaling
+% 
+% Author: Helge Knüttel, 2017
+% 
+
+% Set the page size to A4
+/pwidth 595 def
+/pheight 842 def
+
+% Define a custom value of teeth per inch
+% 
+% Some conversions
+/tsmm2tpi { 25.5 exch div } def
+/tpi2tsmm { 25.5 exch div } def
+% 
+% YOU CAN SET A TOOTH SPACING IN MM IN THE FOLLOWING LINE!!
+/customtoothspacingmm 5.00 def
+/customtpi customtoothspacingmm tsmm2tpi def  % Calculate custom tpi value
+% ALTERNATIVELY, YOU MAY SET A CUSTOM TPI VALUE IN THE FOLLOWING CODE LINE!!!
+% DO NOT FORGET TO UNCOMMENT THE NEXT 2 LINES SO THAT THIS TAKES EFFECT.
+% /customtpi 7.5 def
+% /customtoothspacingmm customtpi tpi2tsmm def  % Calculate tooth spacing in mm
+% 
+% Line width in PostScripr points (1/72 inch)
+/linewidth 0.5 def
+% End of configuration
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Practical conversions to PostScript points
+/inch { 72 mul } def
+/mm { 25.4 div 72 mul } def
+
+
+/tpipage  % Begin definition of a single page
+{
+% Set page size
+<< /PageSize [pwidth pheight] >> setpagedevice 
+
+/toothspacing 72 tpi div def  % Spacing in PS points
+% Print space used
+/leftborder 10 def
+/rightborder leftborder 2 mul pwidth exch neg add def
+/bottomborder 10 def
+/topborder bottomborder 2 mul pheight exch neg add def
+
+% Draw lines
+bottomborder toothspacing topborder
+{ leftborder exch moveto rightborder 0 rlineto } 
+for
+gsave
+  1 setlinewidth
+  stroke
+grestore
+
+% Add a label with tpi value
+/Helvetica findfont    % Select font
+20 scalefont           % Font size 20
+setfont                % Use as current font
+rightborder 50 moveto  % Where we place the label
+90 rotate              % Rotate
+tpi =string cvs        % Convert tpi to string
+show                   % Print tpi value
+( tpi  /  ) show       % Print " tpi  /  "
+tsmm =string cvs       % Convert tpi to string
+show                   % Print tpi value
+( mm tooth spacing) show  % Print " tpi  /  "
+
+
+% Seite ausgeben
+showpage               
+} def  % End definition of a single page
+
+
+% Make page with custom tpi value
+/tpi customtpi def
+/tsmm customtoothspacingmm def
+tpipage
+
+% Make pages with tpi values from 4 through 20
+4 1 20
+{
+  /tpi exch def  % Set tpi from stack
+  /tsmm tpi tpi2tsmm def  % Calculate tooth spacing
+  tpipage        % Make a page
+}
+for
+
+
