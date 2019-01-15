@@ -1,0 +1,128 @@
+%!PS
+
+% Draw a box with inch scales
+
+% Practical conversions to PostScript points
+/inch { 72 mul } def
+/mm { 25.4 div 72 mul } def
+
+
+% Surrounding box
+/scalebox {
+  /boxwidth 2.5 inch def
+  /boxheight 3.0 inch def
+  newpath
+  0  0 moveto
+  1.0 setgray
+  0 0 boxwidth boxheight rectfill
+  newpath
+  0 setgray
+  0 0 boxwidth boxheight rectstroke
+
+  gsave
+  0.25 inch 0.25 inch translate
+  scalebar
+  grestore
+
+  gsave
+  0.25 inch 2.75 inch translate
+  -90 rotate
+  scalebar
+  grestore
+
+  grestore
+} def
+
+% Adapted from ISBN 3-925118-70-5, page51
+/RigthShow
+{  dup stringwidth pop
+   neg
+   0 rmoveto
+   show
+} def
+/CenterShow
+{  dup stringwidth pop
+   2 div neg
+   0 rmoveto
+   show
+} def
+
+
+
+% Horizontal scale bar
+/scalebar {
+  /orx 0 def % origin x
+  /ory 0 def % origin y
+  /barwidth 10 def
+  gsave
+
+  % filled bar
+  newpath
+  orx ory moveto
+  1 inch 0 rlineto
+  0 10 rlineto
+  -1 inch 0 rlineto
+  closepath
+  0 setgray
+  fill
+  newpath
+  orx ory moveto
+  1 inch 0 rlineto
+  0 10 rlineto
+  -1 inch 0 rlineto
+  closepath
+  1 setlinewidth
+  0 setgray
+  stroke
+
+  % open bar
+  newpath
+  orx 1 inch add ory moveto
+  1 inch 0 rlineto
+  0 10 rlineto
+  -1 inch 0 rlineto
+  % closepath
+  1 setlinewidth
+  stroke
+
+  % Ticks
+  /tickbasex orx 1 inch add def
+  /tickbasey ory barwidth add def
+  /tick { % length hor.-pos
+    gsave
+    newpath
+    tickbasey moveto % hor. position from stack
+    0 exch rlineto % tick length from stack
+    0.1 setlinewidth
+    stroke
+    grestore
+  } def
+
+  25 tickbasex tick
+  25 tickbasex 1 inch add tick
+  20 tickbasex 1 inch 2 div add tick
+  15 tickbasex 1 inch 4 div 1 mul add tick
+  15 tickbasex 1 inch 4 div 3 mul add tick
+  10 tickbasex 1 inch 8 div 1 mul add tick
+  10 tickbasex 1 inch 8 div 3 mul add tick
+  10 tickbasex 1 inch 8 div 5 mul add tick
+  10 tickbasex 1 inch 8 div 7 mul add tick
+
+  /Helvetica findfont
+  10 scalefont setfont
+
+  % Tick marks
+  tickbasex 3 add tickbasey 22 add moveto
+  (0) show
+  tickbasex 1 inch add 3 sub tickbasey 22 add moveto
+  (1) RigthShow
+  tickbasex 0.5 inch add tickbasey 22 add moveto
+  (inch) CenterShow
+
+  grestore
+} def
+
+100 100 translate
+scalebox
+
+showpage
