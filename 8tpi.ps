@@ -35,7 +35,7 @@
 % /customtoothspacingmm customtpi tpi2tsmm def  % Calculate tooth spacing in mm
 % 
 % Line width in PostScripr points (1/72 inch)
-/linewidth 0.5 def
+/linewidth 0.3 def
 % End of configuration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -44,6 +44,164 @@
 /mm { 25.4 div 72 mul } def
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Draw a box with inch scales
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Adapted from ISBN 3-925118-70-5, page51
+/RigthShow
+{  dup stringwidth pop
+   neg
+   0 rmoveto
+   show
+} def
+/CenterShow
+{  dup stringwidth pop
+   2 div neg
+   0 rmoveto
+   show
+} def
+
+
+
+% Horizontal scale bar
+/scalebar {
+  /orx 0 def % origin x
+  /ory 0 def % origin y
+  /barwidth 10 def
+  /tickwidth 0.2 def
+  gsave
+
+  % Inch scale
+  % filled bar
+  newpath
+  orx ory moveto
+  1 inch 0 rlineto
+  0 10 rlineto
+  -1 inch 0 rlineto
+  closepath
+  0 setgray
+  tickwidth setlinewidth
+  fill
+  newpath
+  orx ory moveto
+  1 inch 0 rlineto
+  0 10 rlineto
+  -1 inch 0 rlineto
+  closepath
+  tickwidth setlinewidth
+  0 setgray
+  stroke
+
+  % open bar
+  newpath
+  orx 1 inch add ory moveto
+  1 inch 0 rlineto
+  0 10 rlineto
+  -1 inch 0 rlineto
+  % closepath
+  1 setlinewidth
+  tickwidth setlinewidth
+  stroke
+
+  % Ticks inch scale
+  /tickbasex orx 1 inch add def
+  /tickbasey ory barwidth add def
+  /tick { % length hor.-pos
+    gsave
+    newpath
+    tickbasey moveto % hor. position from stack
+    0 exch rlineto % tick length from stack
+    tickwidth setlinewidth
+    stroke
+    grestore
+  } def
+
+  25 tickbasex tick
+  25 tickbasex 1 inch add tick
+  20 tickbasex 1 inch 2 div add tick
+  15 tickbasex 1 inch 4 div 1 mul add tick
+  15 tickbasex 1 inch 4 div 3 mul add tick
+  10 tickbasex 1 inch 8 div 1 mul add tick
+  10 tickbasex 1 inch 8 div 3 mul add tick
+  10 tickbasex 1 inch 8 div 5 mul add tick
+  10 tickbasex 1 inch 8 div 7 mul add tick
+
+  /Helvetica findfont
+  10 scalefont setfont
+
+  % Tick marks inch scale
+  tickbasex 3 add tickbasey 22 add moveto
+  (0) show
+  tickbasex 1 inch add 3 sub tickbasey 22 add moveto
+  (1) RigthShow
+  tickbasex 0.5 inch add tickbasey 22 add moveto
+  (inch) CenterShow
+
+  % mm scale
+  /mm_tickbase_x orx def
+  /mm_tickbase_y ory def
+  gsave
+  % ticks mm scale
+  0 1 50 {
+    /n exch def  % set n from stack
+    mm_tickbase_x n mm add mm_tickbase_y moveto 
+
+    % put tick length on stack
+    n 0 eq {-20} {-10} ifelse 
+    n 5 mod 0 eq {n 10 mod 0 eq {-20} {-15} ifelse} {-10} ifelse
+    
+    0 exch rlineto 
+    tickwidth setlinewidth
+    stroke
+  } for
+
+  % tick marks mm scale
+  mm_tickbase_x 3 add mm_tickbase_y 22 sub moveto
+  (0) show
+  mm_tickbase_x 50 mm add 3 sub mm_tickbase_y 22 sub moveto
+  (5) RigthShow
+  mm_tickbase_x 25 mm add mm_tickbase_y 22 sub moveto
+  (cm) CenterShow
+
+  grestore
+  
+
+  grestore
+} def
+
+% Surrounding box
+/scalebox {
+  /boxwidth 2.5 inch def
+  /boxheight 3.0 inch def
+  gsave
+  newpath
+  0  0 moveto
+  1.0 setgray
+  0 0 boxwidth boxheight rectfill
+  newpath
+  0 setgray
+  0 0 boxwidth boxheight rectstroke
+
+  gsave
+  0.25 inch 0.5 inch translate
+  scalebar
+  grestore
+
+  gsave
+  0.5 inch 2.75 inch translate
+  -90 rotate
+  scalebar
+  grestore
+
+  grestore
+} def
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% End of scale box
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% showpage
 /tpipage  % Begin definition of a single page
 {
 % Set page size
@@ -66,6 +224,7 @@ gsave
 grestore
 
 % Add a label with tpi value
+gsave
 /Helvetica findfont    % Select font
 20 scalefont           % Font size 20
 setfont                % Use as current font
@@ -77,7 +236,15 @@ show                   % Print tpi value
 tsmm =string cvs       % Convert tpi to string
 show                   % Print tpi value
 ( mm tooth spacing) show  % Print " tpi  /  "
+grestore
 
+% Draw a box with scales
+gsave
+rightborder 2.5 inch sub topborder 3.5 inch sub translate
+% 90 rotate
+% 100 100 translate
+scalebox
+grestore
 
 % Seite ausgeben
 showpage               
@@ -97,5 +264,3 @@ tpipage
   tpipage        % Make a page
 }
 for
-
-
