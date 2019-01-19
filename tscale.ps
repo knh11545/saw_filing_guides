@@ -7,32 +7,6 @@
 /mm { 25.4 div 72 mul } def
 
 
-% Surrounding box
-/scalebox {
-  /boxwidth 2.5 inch def
-  /boxheight 3.0 inch def
-  newpath
-  0  0 moveto
-  1.0 setgray
-  0 0 boxwidth boxheight rectfill
-  newpath
-  0 setgray
-  0 0 boxwidth boxheight rectstroke
-
-  gsave
-  0.25 inch 0.25 inch translate
-  scalebar
-  grestore
-
-  gsave
-  0.25 inch 2.75 inch translate
-  -90 rotate
-  scalebar
-  grestore
-
-  grestore
-} def
-
 % Adapted from ISBN 3-925118-70-5, page51
 /RigthShow
 {  dup stringwidth pop
@@ -51,10 +25,10 @@
 
 % Horizontal scale bar
 /scalebar {
+  gsave
   /orx 0 def % origin x
   /ory 0 def % origin y
   /barwidth 10 def
-  gsave
 
   % filled bar
   newpath
@@ -121,6 +95,41 @@
 
   grestore
 } def
+
+
+% Surrounding box
+/scalebox {
+  /boxwidth 2.5 inch def
+  /boxheight 3.0 inch def
+  gsave
+
+  newpath
+  0  0 moveto
+  1.0 setgray
+  0 0 boxwidth boxheight rectfill
+  newpath
+  0 setgray
+  0 0 boxwidth boxheight rectstroke
+
+  gsave
+  0.25 inch 0.25 inch translate
+  scalebar
+  grestore
+
+  gsave
+  0.25 inch 2.75 inch translate
+  -90 rotate
+  scalebar
+  grestore
+
+  grestore
+} def
+
+% Make page
+% Set the page size to A4
+/pwidth 595 def
+/pheight 842 def
+<< /PageSize [pwidth pheight] >> setpagedevice 
 
 100 100 translate
 scalebox
