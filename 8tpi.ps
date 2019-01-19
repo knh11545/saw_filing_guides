@@ -1,7 +1,7 @@
 %!PS-Adobe-2.0
 %%Title: Saw Filing Guides
 %%Creator: Helge Knüttel
-%%CreationDate: 2017-12-30
+%%CreationDate: 2019-01-19
 %%DocumentPaperSizes: A4
 %%EndComments
 % 
@@ -13,7 +13,7 @@
 % 
 % The pages must be printed WITHOUT further scaling
 % 
-% Author: Helge Knüttel, 2017
+% Author: Helge Knüttel, 2017-2019
 % 
 
 % Set the page size to A4
@@ -23,19 +23,18 @@
 % Define a custom value of teeth per inch
 % 
 % Some conversions
-/tsmm2tpi { 25.5 exch div } def
-/tpi2tsmm { 25.5 exch div } def
+/tsmm2tpi { 25.4 exch div } def
+/tpi2tsmm { 25.4 exch div } def
 % 
 % YOU CAN SET A TOOTH SPACING IN MM IN THE FOLLOWING LINE!!
 /customtoothspacingmm 5.00 def
-/customtpi customtoothspacingmm tsmm2tpi def  % Calculate custom tpi value
+/customtpi customtoothspacingmm tsmm2tpi 10 mul round 10 div def  % Calculate custom tpi value
 % ALTERNATIVELY, YOU MAY SET A CUSTOM TPI VALUE IN THE FOLLOWING CODE LINE!!!
-% DO NOT FORGET TO UNCOMMENT THE NEXT 2 LINES SO THAT THIS TAKES EFFECT.
+% DO NOT FORGET TO UNCOMMENT THE NEXT LINE SO THAT THIS TAKES EFFECT.
 % /customtpi 7.5 def
-% /customtoothspacingmm customtpi tpi2tsmm def  % Calculate tooth spacing in mm
 % 
-% Line width in PostScripr points (1/72 inch)
-/linewidth 0.3 def
+% Line width in PostScript points (1/72 inch)
+/line_width 0.3 def
 % End of configuration
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -49,12 +48,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Adapted from ISBN 3-925118-70-5, page51
+% Show text right-aligned to current position
 /RigthShow
 {  dup stringwidth pop
    neg
    0 rmoveto
    show
 } def
+% Show text center-aligned to current position
 /CenterShow
 {  dup stringwidth pop
    2 div neg
@@ -157,12 +158,12 @@
   } for
 
   % tick marks mm scale
-  mm_tickbase_x 3 add mm_tickbase_y 22 sub moveto
+  mm_tickbase_x 2 add mm_tickbase_y 22 sub moveto
   (0) show
-  mm_tickbase_x 50 mm add 3 sub mm_tickbase_y 22 sub moveto
-  (5) RigthShow
+  mm_tickbase_x 50 mm add 2 sub mm_tickbase_y 22 sub moveto
+  (50) RigthShow
   mm_tickbase_x 25 mm add mm_tickbase_y 22 sub moveto
-  (cm) CenterShow
+  (mm) CenterShow
 
   grestore
   
@@ -201,66 +202,71 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-% showpage
-/tpipage  % Begin definition of a single page
+% Definition of a single page
+% 
+% Needs 1 argument on stack: tpi
+/tpipage  
 {
-% Set page size
-<< /PageSize [pwidth pheight] >> setpagedevice 
+  % Fetch parameter from stack
+  /tpi exch def
 
-/toothspacing 72 tpi div def  % Spacing in PS points
-% Print space used
-/leftborder 10 def
-/rightborder leftborder 2 mul pwidth exch neg add def
-/bottomborder 10 def
-/topborder bottomborder 2 mul pheight exch neg add def
+  /toothspacing 72 tpi div def  % tooth spacing in PS points
+  /tsmm tpi tpi2tsmm 10 mul round 10 div def % tooth spacing in mm rounded to 0.1 mm
 
-% Draw lines
-bottomborder toothspacing topborder
-{ leftborder exch moveto rightborder 0 rlineto } 
-for
-gsave
-  1 setlinewidth
+  % Set page size
+  << /PageSize [pwidth pheight] >> setpagedevice 
+
+  % Print space used
+  /leftborder 10 def
+  /rightborder leftborder 2 mul pwidth exch neg add def
+  /bottomborder 10 def
+  /topborder bottomborder 2 mul pheight exch neg add def
+
+  % Draw lines
+  gsave
+  line_width setlinewidth
+  bottomborder toothspacing topborder
+  {
+    leftborder exch moveto rightborder 0 rlineto 
+  } 
+  for
   stroke
-grestore
+  grestore
 
-% Add a label with tpi value
-gsave
-/Helvetica findfont    % Select font
-20 scalefont           % Font size 20
-setfont                % Use as current font
-rightborder 50 moveto  % Where we place the label
-90 rotate              % Rotate
-tpi =string cvs        % Convert tpi to string
-show                   % Print tpi value
-( tpi  /  ) show       % Print " tpi  /  "
-tsmm =string cvs       % Convert tpi to string
-show                   % Print tpi value
-( mm tooth spacing) show  % Print " tpi  /  "
-grestore
+  % Add a label with tpi value
+  gsave
+  /Helvetica findfont    % Select font
+  20 scalefont           % Font size 20
+  setfont                % Use as current font
+  rightborder 50 moveto  % Where we place the label
+  90 rotate              % Rotate
+  tpi =string cvs        % Convert tpi to string
+  show                   % Print tpi value
+  ( tpi  /  ) show       % Print " tpi  /  "
+  tsmm =string cvs       % Convert tpi to string
+  show                   % Print tpi value
+  ( mm tooth spacing) show  % Print " tpi  /  "
+  grestore
 
-% Draw a box with scales
-gsave
-rightborder 2.5 inch sub topborder 3.5 inch sub translate
-% 90 rotate
-% 100 100 translate
-scalebox
-grestore
+  % Draw a box with scales
+  gsave
+  rightborder 2.5 inch sub topborder 3.5 inch sub translate
+  % 90 rotate
+  % 100 100 translate
+  scalebox
+  grestore
 
-% Seite ausgeben
-showpage               
+  % Seite ausgeben
+  showpage               
 } def  % End definition of a single page
 
 
 % Make page with custom tpi value
-/tpi customtpi def
-/tsmm customtoothspacingmm def
-tpipage
+customtpi tpipage
 
 % Make pages with tpi values from 4 through 20
 4 1 20
 {
-  /tpi exch def  % Set tpi from stack
-  /tsmm tpi tpi2tsmm def  % Calculate tooth spacing
   tpipage        % Make a page
 }
 for
