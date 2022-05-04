@@ -13,12 +13,25 @@
 % 
 % The pages must be printed WITHOUT further scaling
 % 
-% Author: Helge Knüttel, 2017-2019
+% Author: Helge Knüttel, 2017-2022
 % 
 
 % Set the page size to A4
 /pwidth 595 def
 /pheight 842 def
+% Set the page size to A3
+% /pwidth 842 def
+% /pheight 1192 def
+% Set the page size to ANSI A/Letter (8.50 × 11.00 inches)
+% /pwidth 612 def
+% /pheight 792 def
+% Set the page size to US Legal (8.50 × 14.00 inches)
+% /pwidth 612 def
+% /pheight 1008 def
+% Set the page size to ANSI B/Ledger/Tabloid (11.00 × 17.00 inches)
+% /pwidth 792 def
+% /pheight 1224 def
+%
 
 % Define a custom value of teeth per inch
 % 
@@ -27,11 +40,11 @@
 /tpi2tsmm { 25.4 exch div } def
 % 
 % YOU CAN SET A TOOTH SPACING IN MM IN THE FOLLOWING LINE!!
-/customtoothspacingmm 5.00 def
+/customtoothspacingmm 11.00 def
 /customtpi customtoothspacingmm tsmm2tpi 10 mul round 10 div def  % Calculate custom tpi value
 % ALTERNATIVELY, YOU MAY SET A CUSTOM TPI VALUE IN THE FOLLOWING CODE LINE!!!
 % DO NOT FORGET TO UNCOMMENT THE NEXT LINE SO THAT THIS TAKES EFFECT.
-% /customtpi 7.5 def
+% /customtpi 3.5 def
 % 
 % Line width in PostScript points (1/72 inch)
 /line_width 0.3 def
@@ -256,7 +269,7 @@
   scalebox
   grestore
 
-  % Seite ausgeben
+  % Show page
   showpage               
 } def  % End definition of a single page
 
